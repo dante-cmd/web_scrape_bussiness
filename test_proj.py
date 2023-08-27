@@ -17,6 +17,8 @@ t2 = time.perf_counter()
 print(f'Finished in {t2 - t1} seconds')
 
 from pathlib import  Path
+import pandas as pd
+import numpy as np
 
 path_json = Path().rglob('*.json')
 path_json = list(path_json)
@@ -27,3 +29,12 @@ def reader_json(name_file):
         return data_json
 
 kalu = [ reader_json(name_file) for name_file in path_json]
+df = pd.DataFrame(kalu)
+df = df.rename(columns={'active-price': 'ActivePrice', 'old-price':'OldPrice'})
+df = df[['ActivePrice', 'Code', 'Title', 'category']].copy()
+df['ActivePrice'] = df['ActivePrice'].astype(float).copy()
+df['Quantity'] = np.random.randint(5, 500, df.shape[0])
+df = df[df.category != 'l'].copy()
+df.to_csv('DataScrape.csv', sep = ',', index = False)
+
+
